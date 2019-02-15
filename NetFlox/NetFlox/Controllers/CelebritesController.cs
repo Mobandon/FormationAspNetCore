@@ -19,12 +19,23 @@ namespace NetFlox.Controllers
         }
 
         // GET: Celebrites
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string nom)
         {
-            var celebrites = await _context.Celebrites
+            /*var celebrites = await _context.Celebrites
                 .OrderBy(c => c.Nom)
-                .ToListAsync();
-            return View(celebrites);
+                .ToListAsync();*/
+
+            var celebrites = from m in _context.Celebrites
+                        select m;
+
+            if (!String.IsNullOrEmpty(nom))
+            {
+                celebrites = celebrites.Where(s => s.Nom.Contains(nom));
+            }
+
+            celebrites.OrderBy(c => c.Nom);
+
+            return View(await celebrites.ToListAsync());
         }
 
         // GET: Celebrites/Details/5

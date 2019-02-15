@@ -19,12 +19,22 @@ namespace NetFlox.Controllers
         }
 
         // GET: Films
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString)
         {
-            var films = await _context.Films
-                .OrderByDescending(f => f.Annee)
-                .ToListAsync();
-            return View(films);
+            /*var films = await _context.Films
+                .OrderByDescending(f => f.Annee);
+                .ToListAsync();*/
+            var films = from m in _context.Films
+                        select m;
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                films = films.Where(s => s.Titre.Contains(searchString));
+            }
+
+            films.OrderByDescending(f => f.Annee);
+
+            return View(await films.ToListAsync());
         }
 
         // GET: Films/Details/5
